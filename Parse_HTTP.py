@@ -18,11 +18,13 @@ Get input from user
     Do a check to make sure the arg exists and print the correct usage if it is not
 '''
 def get_input():
+    return open("Good_Requests/complex.txt", 'rb').readlines()
     if len(sys.argv) != 2:
          print("HTTP file not specified\n Usage: Parse_HTTP.py <path to file>")
          exit(1)
     else:
         return open(sys.argv[1], 'rb').readlines()
+    
 
 '''
 Function #2
@@ -57,7 +59,7 @@ Verify version
 '''
 
 def validate_version(version):
-    if http_version != "HTTP/1.1":
+    if version != "HTTP/1.1":
         Responses.Response_Code_400()
 
 '''
@@ -127,10 +129,10 @@ def parse_request_fields(request):
     if parsed.count("\\r\\n\\r\\n") != 1:
         Responses.Response_Code_400()
     
-    request_line = parsed.split("\r\n\r\n")[0].split("\r\n")[0]
+    request_line = parsed.split("\\r\\n")[0]
     validate_request_line(request_line)
 
-    headers = request_str.split("\r\n\r\n")[0].split("\r\n")[1:]
+    headers = parsed.split("\\r\\n")[1:-1]
     validate_headers(headers)
 
     Responses.Response_Code_200()
