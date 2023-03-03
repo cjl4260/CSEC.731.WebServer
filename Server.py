@@ -1,37 +1,31 @@
-'''
-Server.py
-Language: python3
-Author: Charles Lagasse
-Description: Main server file that orchestrates the inner logic 
-'''
-
-# Import needed resources
+import sys
+import Connection
+import Inputs
 
 
-'''
-Usage 
-    Input: None
-    Output: Print correct syntax to use with server 
-    Logic:
-        Checks for all required command line args and prints the correct syntax if the given are incorrect 
-'''
+def print_usage():
+    print("Usage: HTTP_Server.py ip_address port")
 
-'''
-Get Input 
-    Input: None
-    Output: All command line args parsed out 
-    Logic:
-        Determines if request is HTTP or HTTPs and parses the args 
-        If args are incorrect it calls Usage function to print correct syntax
-'''
 
-'''
-Main
-    Input: None
-    Output: None
-    Logic:
-        Calls get input 
-        Passes output into the connection handeler to start the connection
-'''
+def gather_input():
+    input_args = Inputs.Inputs()
 
-main()
+    if len(sys.argv) == 3:
+        ip_address, port = sys.argv[1:3]
+        input_args.set_ip_address(ip_address)
+        input_args.set_port(int(port))
+        input_args.set_scheme("http")
+    else:
+        print_usage()
+        exit(1)
+    
+    return input_args
+
+
+def main():
+    input_args = gather_input()
+    Connection.start_server(input_args)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,71 +1,55 @@
-'''
-Responses.py
-Language: python3
-Author: Charles Lagasse
-Description: Response codes to send the user. Referenced in Parse_HTTP.py
-'''
+from datetime import datetime
 
-def Response_Code_200(body):
-    response = "HTTP/1.1 200 OK\r\n"
-    #response += "Date: " + datetime.now().strftime('%a, %d %b %Y %I:%M:%S') + "\r\n"
-    response += "\r\n"
-    response += body
-    return response
 
-def Response_Code_201(body, location):
-   
-    response = "HTTP/1.1 201 Created\r\n"
-    response += "Content-Location: " + location + "\r\n"
-    response += "\r\n"
-    response += body
+def respond_with_200(body, additional_headers=None):
+    response = "HTTP/1.1 200 OK\r\nDate: {}\r\nContent-Length: {}\r\n".format(
+        datetime.now().strftime('%a, %d %b %Y %I:%M:%S'), len(body)
+    )
+    if additional_headers is not None:
+        response += "\r\n".join(additional_headers) + "\r\n"
+    response += "\r\n" + body
     return response
 
 
-def Response_Code_400():
-    response = "HTTP/1.1 400 Bad Request\r\n"
-    response + "\r\n"
-    response += "Bad Request"
-    response += "\r\n"
+def respond_with_201(body, location):
+    response = "HTTP/1.1 201 Created\r\nContent-Location: {}\r\n\r\n{}".format(
+        location, body
+    )
     return response
 
-def Response_Code_403():
-    response = "HTTP/1.1 400 Forbidden\r\n"
-    response + "\r\n"
-    response += "Forbidden"
-    response += "\r\n"
+
+def respond_with_400():
+    response = "HTTP/1.1 400 Bad Request\r\n\r\nBad Request"
     return response
 
-def Response_Code_404():
-    response = "HTTP/1.1 404 Not Found\r\n"
-    response + "\r\n"
-    response += "Not Found"
-    response += "\r\n"
+
+def respond_with_403():
+    response = "HTTP/1.1 403 Forbidden\r\n\r\nForbidden"
     return response
 
-def Response_Code_411():
-    response = "HTTP/1.1 411 Length Required\r\n"
-    response + "\r\n"
-    response += "Length Required"
-    response += "\r\n"
+
+def respond_with_404():
+    response = "HTTP/1.1 404 Not Found\r\n\r\nNot Found"
     return response
 
-def Response_Code_500():
-    response = "HTTP/1.1 500 Internal Server Error\r\n"
-    response + "\r\n"
-    response += "Internal Server Error"
-    response += "\r\n"
+
+def respond_with_411():
+    response = "HTTP/1.1 411 Length Required\r\n\r\nLength Required"
     return response
 
-def Response_Code_501():
-    response = "HTTP/1.1 501 Not Implemented\r\n"
-    response + "\r\n"
-    response += "Not Implemented"
-    response += "\r\n"
+
+def respond_with_500():
+    response = "HTTP/1.1 500 Internal Server Error\r\n\r\nInternal Server Error"
+    return response
+    
+
+def respond_with_501(body=None):
+    if body is None:
+        body = "Not Implemented"
+    response = "HTTP/1.1 501 Not Implemented\r\n\r\n{}".format(body)
     return response
 
-def Response_Code_505():
-    response = "HTTP/1.1 505 HTTP Version Not Supported\r\n"
-    response + "\r\n"
-    response += "HTTP Version Not Supported"
-    response += "\r\n"
+
+def respond_with_505():
+    response = "HTTP/1.1 505 HTTP Version Not Supported\r\n\r\nHTTP Version Not Supported"
     return response
