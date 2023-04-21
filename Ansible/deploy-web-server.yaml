@@ -1,0 +1,46 @@
+---
+- name: Deploy Web Server as a Service
+  hosts: your_server_hostname
+  become: yes
+
+  vars:
+    project_name: Python_WebServer
+    project_path: /opt/{{ project_name }}
+
+  tasks:
+    - name: Copy project directory
+      copy:
+        src: /Code
+        dest: "{{ project_path }}"
+
+    - name: Run setup command
+      ansible.builtin.shell: |
+        cd {{ project_path }}
+        python Server.py 0.0.0.0 4000
+
+    - name: Create systemd service
+      copy:
+        dest: /etc/systemd/system/{{ project_name }}.service
+        content: |
+          [Unit]
+          Description=Python Web Server
+          After=network.target
+
+          [Service]
+          User=root
+          WorkingDirectory={{ project_path }}
+          ExecStart={{ project_path }}/start.sh
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start service
+      systemd:
+        name: "{{ project_name }}"
+        enabled: yes
+        state: started
